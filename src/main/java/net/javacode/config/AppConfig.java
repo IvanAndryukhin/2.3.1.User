@@ -15,11 +15,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static org.springframework.orm.hibernate5.SessionFactoryUtils.getDataSource;
+
 
 @Configuration
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@ComponentScan(value = "net.javacode")
+@ComponentScan(basePackages = "net.javacode")
 public class AppConfig {
 
 
@@ -31,7 +33,7 @@ public class AppConfig {
 
 
     @Bean
-    public DataSource getDataSource() {
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getProperty("db.driver"));
         dataSource.setUrl(env.getProperty("db.url"));
@@ -43,7 +45,7 @@ public class AppConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(getDataSource());
+        entityManager.setDataSource(dataSource());
         entityManager.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
         entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         entityManager.setJpaProperties(getHibernateProperties());
