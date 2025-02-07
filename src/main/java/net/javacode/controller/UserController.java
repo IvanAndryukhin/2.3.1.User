@@ -1,70 +1,77 @@
 package net.javacode.controller;
 
-import net.javacode.dao.UserDaoImpl;
 import net.javacode.model.User;
+import net.javacode.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserDaoImpl userDao;
+    private final UserService userService;
 
-    public UserController(UserDaoImpl userDao) {
-        this.userDao = userDao;
+    UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-        List<User> users = userDao.getUsers();
-        return ResponseEntity.ok(users);
+    public List<User> getUsers() {
+        return userService.getUsers();
     }
 
-    @PostMapping
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        userDao.addUser(user);
-        return ResponseEntity.ok("User added successfully");
+    @GetMapping("/new")
+    public String createUser(Model model) {
+        model.addAttribute("user", new User());
+        return "new_user";
+    }
+
+    @PostMapping("/")
+    public String addUser(@ModelAttribute User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "new_user";
+        }
+        userService.addUser(user);
+        return "redirect:/users/";
     }
 
     @GetMapping("/edit")
-    public String editUserForm(@RequestParam Long id, Model model) {
-        User user = userDao.getUserById(id);
-        if (user != null) {
-            model.addAttribute("user", user);
-            return "edit_user";
-        } else {
-            return "redirect:/users";
+    public String editUser(@RequestParam Long id, Model model) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return "redirect:/users/";
         }
+        model.addAttribute("user", user);
+        return "edit_user";
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateUser(@RequestBody User user) {
-        userDao.updateUser(user);
-        return ResponseEntity.ok("User updated successfully");
+    public String updateUser(@ModelAttribute User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "edit_user";
+        }
+        userService.updateUser(user);
+        return "redirect:/users/";
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteUser(@RequestParam Long id) {
-        userDao.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully");
-    }
-
-    @GetMapping("/getById")
-    public ResponseEntity<User> getUserById(@RequestParam Long id) {
-        User user = userDao.getUserById(id);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam Long id) {
+        userService.deleteUser(id);
+        return "redirect:/users/";
     }
 }
+
+
 
 
 

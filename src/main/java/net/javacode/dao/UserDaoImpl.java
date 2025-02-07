@@ -31,14 +31,14 @@ public class UserDaoImpl implements UserDao {
         }
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
-        existingUser.setAdress(user.getAdress()); // Проверьте правильность написания. Может быть "address"?
+        existingUser.setAdress(user.getAdress());
     }
 
     @Override
     public void deleteUser(Long id) {
         User user = entityManager.find(User.class, id);
         if (user != null) {
-            entityManager.remove(user); // Удаляем объект user, а не его id
+            entityManager.remove(user);
         } else {
             throw new EntityNotFoundException("User not found with id: " + id);
         }
@@ -58,4 +58,5 @@ public class UserDaoImpl implements UserDao {
         return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
     }
 }
+
 
