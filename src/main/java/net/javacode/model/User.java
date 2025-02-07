@@ -17,8 +17,8 @@ public class User {
     private String name;
     @Column(name = "email")
     private String email;
-    @Column(name = "address")
-    private String address;
+    @Column(name = "adress")
+    private String adress;
     public User() {
     }
 
@@ -26,7 +26,7 @@ public class User {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.address = address;
+        this.adress = adress;
     }
 
     public Long getId() {
@@ -53,12 +53,12 @@ public class User {
         this.email = email;
     }
 
-    public String getAddress() {
-        return address;
+    public String getAdress() {
+        return adress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAdress(String adress) {
+        this.adress = adress;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
+                ", adress='" + adress + '\'' +
                 '}';
     }
 }

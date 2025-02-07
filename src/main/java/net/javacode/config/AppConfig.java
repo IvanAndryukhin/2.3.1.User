@@ -12,10 +12,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.util.Properties;
-
-import static org.springframework.orm.hibernate5.SessionFactoryUtils.getDataSource;
 
 
 @Configuration
@@ -24,18 +23,21 @@ import static org.springframework.orm.hibernate5.SessionFactoryUtils.getDataSour
 @ComponentScan(basePackages = "net.javacode")
 public class AppConfig {
 
-
     private final Environment env;
+
     @Autowired
     public AppConfig(Environment env) {
         this.env = env;
     }
 
-
     @Bean
     public DataSource dataSource() {
+        String driverClassName = env.getProperty("db.driver");
+        if (driverClassName == null) {
+            throw new IllegalArgumentException("Database driver class name is not specified");
+        }
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("db.driver"));
+        dataSource.setDriverClassName(driverClassName);
         dataSource.setUrl(env.getProperty("db.url"));
         dataSource.setUsername(env.getProperty("db.username"));
         dataSource.setPassword(env.getProperty("db.password"));
@@ -43,13 +45,13 @@ public class AppConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-        entityManager.setDataSource(dataSource());
-        entityManager.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
-        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManager.setJpaProperties(getHibernateProperties());
-        return entityManager;
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan(env.getRequiredProperty("db.entity.package"));
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        em.setJpaProperties(getHibernateProperties());
+        return em;
     }
 
     public Properties getHibernateProperties() {
@@ -60,9 +62,15 @@ public class AppConfig {
     }
 
     @Bean
-    public JpaTransactionManager getTransactionManager() {
+    public JpaTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(getEntityManagerFactory().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return transactionManager;
     }
+
+    @Bean
+    public EntityManager entityManager() {
+        return entityManagerFactory().getObject().createEntityManager();
+    }
 }
+
