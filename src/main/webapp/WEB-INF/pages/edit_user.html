@@ -1,33 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
 </head>
 <body>
-<h2>Edit User</h2>
-<br>
-<form th:method="post" th:action="@{/update}" th:object="${user}">
-    <input type="hidden" th:field="*{id}"/>
+<h1>Edit User</h1>
 
-    <label for="name">Name:</label>
-    <input type="text" th:field="*{name}" id="name"/>
-    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name is not correct</div>
-    <br/>
+<form action="/update" method="post">
+    <input type="hidden" name="id" th:value="${user.id}"/>
 
-    <label for="email">Email:</label>
-    <input type="text" th:field="*{email}" id="email"/>
-    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email is not correct</div>
-    <br/>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" th:value="${user.name}" required>
 
-    <label for="address">Address:</label>
-    <input type="text" th:field="*{address}" id="address"/>
-    <div style="color:red" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address is not correct</div>
-    <br/>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" th:value="${user.email}" required>
 
-    <input type="submit" value="Edit User"/>
+    <label for="address">Address</label>
+    <input type="text" id="address" name="address" th:value="${user.address}" required>
+
+    <input type="submit" value="Update User">
 </form>
+
+<a href="/users" class="button">Back to User List</a>
 </body>
 </html>
+
 
 
