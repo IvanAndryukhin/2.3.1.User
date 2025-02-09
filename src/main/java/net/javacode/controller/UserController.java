@@ -46,13 +46,13 @@ public class UserController {
     public String editUser(@RequestParam int id, Model model) {
         User user = userService.getUser(id);
         model.addAttribute("user", user);
-        return "edit_user"; // Название вашего HTML файла
+        return "edit_user";
     }
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
-        userService.updateUser(user); // Обновление пользователя
-        return "redirect:/"; // Перенаправление после обновления
+        userService.updateUser(user);
+        return "redirect:/";
     }
 
     //Удаление юзера
