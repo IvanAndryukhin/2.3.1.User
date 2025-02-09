@@ -7,33 +7,33 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user_info", schema = "user_schema")
+@Table(name = "user_info")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "name")
     private String name;
     @Column(name = "email")
     private String email;
-    @Column(name = "adress")
-    private String adress;
+    @Column(name = "address")
+    private String address;
     public User() {
     }
 
-    public User(Long id, String name, String email, String address) {
+    public User(int id, String name, String email, String address) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.adress = adress;
+        this.address = address;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -53,12 +53,12 @@ public class User {
         this.email = email;
     }
 
-    public String getAdress() {
-        return adress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdress(String adress) {
-        this.adress = adress;
+    public void setAdress(String address) {
+        this.address = address;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", adress='" + adress + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

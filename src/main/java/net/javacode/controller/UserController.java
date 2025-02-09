@@ -2,72 +2,65 @@ package net.javacode.controller;
 
 import net.javacode.model.User;
 import net.javacode.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
 
-    UserController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
+    //Показываю юзеров и создаю таблицу
+    @GetMapping("/")
+    public String showUsersTable(Model model) {
+        model.addAttribute("users", userService.getUsersList());
+        return "users";
     }
 
     @GetMapping("/new")
-    public String createUser(Model model) {
-        model.addAttribute("user", new User());
+    public String createNewUser(@ModelAttribute("user")@Valid User user) {
         return "new_user";
     }
 
-    @PostMapping("/")
-    public String addUser(@ModelAttribute User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "new_user";
-        }
+    @PostMapping("/add")
+    public String addUser(@ModelAttribute User user) {
         userService.addUser(user);
-        return "redirect:/users/";
+        return "redirect:/";
     }
 
+    //Изменение юзера
+
     @GetMapping("/edit")
-    public String editUser(@RequestParam Long id, Model model) {
-        User user = userService.getUserById(id);
-        if (user == null) {
-            return "redirect:/users/";
-        }
+    public String editUser(@RequestParam int id, Model model) {
+        User user = userService.getUser(id);
         model.addAttribute("user", user);
-        return "edit_user";
+        return "edit_user"; // Название вашего HTML файла
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "edit_user";
-        }
-        userService.updateUser(user);
-        return "redirect:/users/";
+    public String updateUser(@ModelAttribute User user) {
+        userService.updateUser(user); // Обновление пользователя
+        return "redirect:/"; // Перенаправление после обновления
     }
 
+    //Удаление юзера
+
     @PostMapping("/delete")
-    public String deleteUser(@RequestParam Long id) {
+    public String deleteUser(@RequestParam("id") int id) {
         userService.deleteUser(id);
-        return "redirect:/users/";
+        return "redirect:/";
     }
 }
 

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -18,10 +17,24 @@ public class UserDaoImpl implements UserDao {
         this.entityManager = entityManager;
     }
 
+    //Добавляю юзера и показываю таблицу
+
+    @Override
+    public List<User> getUsersList() {
+        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+    }
+
+    @Override
+    public User getUser(int id) {
+        return entityManager.find(User.class, id);
+    }
+
     @Override
     public void addUser(User user) {
         entityManager.persist(user);
     }
+
+    ////МЕТОДЫ ИЗМЕНЕНИЯ////
 
     @Override
     public void updateUser(User user) {
@@ -31,11 +44,13 @@ public class UserDaoImpl implements UserDao {
         }
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
-        existingUser.setAdress(user.getAdress());
+        existingUser.setAdress(user.getAddress());
     }
 
+    //Удаляю юзера
+
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(int id) {
         User user = entityManager.find(User.class, id);
         if (user != null) {
             entityManager.remove(user);
@@ -44,19 +59,6 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    @Override
-    public User getUserById(Long id) {
-        if (id != null) {
-            return entityManager.find(User.class, id);
-        } else {
-            throw new EntityNotFoundException("User id cannot be null");
-        }
-    }
-
-    @Override
-    public List<User> getUsers() {
-        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
-    }
 }
 
 
