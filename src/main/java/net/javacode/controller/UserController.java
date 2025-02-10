@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping
 public class UserController {
@@ -30,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/new")
-    public String createNewUser(@ModelAttribute("user")@Valid User user) {
+    public String createNewUser(@ModelAttribute("user") User user) {
         return "new_user";
     }
 
@@ -44,8 +42,8 @@ public class UserController {
 
     @GetMapping("/edit")
     public String editUser(@RequestParam int id, Model model) {
-        User user = userService.getUser(id);
-        model.addAttribute("user", user);
+        userService.getUser(id);
+        model.addAttribute("user", userService.getUser(id));
         return "edit_user";
     }
 
@@ -57,9 +55,10 @@ public class UserController {
 
     //Удаление юзера
 
+
     @PostMapping("/delete")
     public String deleteUser(@RequestParam("id") int id) {
-        userService.deleteUser(id);
+        this.userService.deleteUser(id);
         return "redirect:/";
     }
 }

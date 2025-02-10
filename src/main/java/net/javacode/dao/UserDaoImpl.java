@@ -38,13 +38,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updateUser(User user) {
-        User existingUser = entityManager.find(User.class, user.getId());
+        User existingUser = getUser(user.getId());
         if (existingUser == null) {
             throw new EntityNotFoundException("User not found with id: " + user.getId());
         }
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
-        existingUser.setAdress(user.getAddress());
+        existingUser.setAddress(user.getAddress());
     }
 
     //Удаляю юзера

@@ -19,6 +19,7 @@ public class User {
     private String email;
     @Column(name = "address")
     private String address;
+
     public User() {
     }
 
@@ -57,7 +58,7 @@ public class User {
         return address;
     }
 
-    public void setAdress(String address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -71,3 +72,4 @@ public class User {
                 '}';
     }
 }
+
